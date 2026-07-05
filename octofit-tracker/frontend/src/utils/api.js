@@ -9,7 +9,8 @@ export function getApiBaseUrl() {
 }
 
 export function getApiUrl(resource) {
-  return `${getApiBaseUrl()}/api/${resource}/`;
+  const baseUrl = getApiBaseUrl();
+  return `${baseUrl}/api/${resource}/`;
 }
 
 export function getPayloadItems(payload) {
