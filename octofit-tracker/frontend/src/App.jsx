@@ -38,7 +38,8 @@ function App() {
       <section className="info-card">
         <p className="mb-0">
           Configure <strong>VITE_CODESPACE_NAME</strong> in <strong>.env.local</strong> for Codespaces deployments.
-          If it is unset, the app falls back to <strong>http://localhost:8000</strong> for local development.
+          The app uses the pattern <strong>https://{import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/[component]/</strong>
+          and falls back to <strong>http://localhost:8000</strong> when it is unset.
         </p>
       </section>
     </main>

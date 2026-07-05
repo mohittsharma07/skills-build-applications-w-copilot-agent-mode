@@ -9,7 +9,12 @@ export function getApiBaseUrl() {
 }
 
 export function getApiUrl(resource) {
-  const baseUrl = getApiBaseUrl();
+  const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+  const baseUrl =
+    typeof codespaceName === 'string' && codespaceName.trim()
+      ? `https://${codespaceName.trim()}-8000.app.github.dev`
+      : 'http://localhost:8000';
+
   return `${baseUrl}/api/${resource}/`;
 }
 
