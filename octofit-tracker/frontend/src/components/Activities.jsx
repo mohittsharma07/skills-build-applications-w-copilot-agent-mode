@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getApiBaseUrl } from '../utils/api';
+import { getApiUrl, getPayloadItems } from '../utils/api';
 
 function Activities() {
   const [activities, setActivities] = useState([]);
@@ -8,14 +8,13 @@ function Activities() {
   useEffect(() => {
     async function loadActivities() {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/api/activities/`);
+        const response = await fetch(getApiUrl('activities'));
         if (!response.ok) {
           throw new Error('Unable to fetch activities');
         }
 
         const payload = await response.json();
-        const items = Array.isArray(payload) ? payload : payload.items ?? payload.results ?? [];
-        setActivities(items);
+        setActivities(getPayloadItems(payload));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }

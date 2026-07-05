@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getApiBaseUrl } from '../utils/api';
+import { getApiUrl, getPayloadItems } from '../utils/api';
 
 function Workouts() {
   const [workouts, setWorkouts] = useState([]);
@@ -8,14 +8,13 @@ function Workouts() {
   useEffect(() => {
     async function loadWorkouts() {
       try {
-        const response = await fetch(`${getApiBaseUrl()}/api/workouts/`);
+        const response = await fetch(getApiUrl('workouts'));
         if (!response.ok) {
           throw new Error('Unable to fetch workouts');
         }
 
         const payload = await response.json();
-        const items = Array.isArray(payload) ? payload : payload.items ?? payload.results ?? [];
-        setWorkouts(items);
+        setWorkouts(getPayloadItems(payload));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
       }
