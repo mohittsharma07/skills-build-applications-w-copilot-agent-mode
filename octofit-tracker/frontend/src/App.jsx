@@ -1,4 +1,10 @@
-import './App.css'
+import { NavLink, Route, Routes } from 'react-router-dom';
+import Activities from './components/Activities';
+import Leaderboard from './components/Leaderboard';
+import Teams from './components/Teams';
+import Users from './components/Users';
+import Workouts from './components/Workouts';
+import './App.css';
 
 function App() {
   return (
@@ -9,32 +15,34 @@ function App() {
         <p className="lead">
           A modern multi-tier fitness platform for athletes, squads, and coaches.
         </p>
-        <div className="d-flex gap-3 flex-wrap">
-          <a className="btn btn-primary btn-lg" href="#features">
-            Explore features
-          </a>
-          <a className="btn btn-outline-secondary btn-lg" href="#api">
-            View API health
-          </a>
-        </div>
+        <nav className="nav nav-pills flex-wrap gap-2 mt-4">
+          <NavLink className="nav-link" to="/users">Users</NavLink>
+          <NavLink className="nav-link" to="/teams">Teams</NavLink>
+          <NavLink className="nav-link" to="/activities">Activities</NavLink>
+          <NavLink className="nav-link" to="/leaderboard">Leaderboard</NavLink>
+          <NavLink className="nav-link" to="/workouts">Workouts</NavLink>
+        </nav>
       </section>
 
-      <section id="features" className="feature-grid">
-        <article className="feature-card">
-          <h2>Activity tracking</h2>
-          <p>Log workouts and compare performance over time.</p>
-        </article>
-        <article className="feature-card">
-          <h2>Team leaderboards</h2>
-          <p>Motivate groups with friendly competition and progress snapshots.</p>
-        </article>
-        <article className="feature-card">
-          <h2>Personalized coaching</h2>
-          <p>Receive recommendations that adapt to your routine and goals.</p>
-        </article>
+      <section className="content-card">
+        <Routes>
+          <Route path="/" element={<Users />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/teams" element={<Teams />} />
+          <Route path="/activities" element={<Activities />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/workouts" element={<Workouts />} />
+        </Routes>
+      </section>
+
+      <section className="info-card">
+        <p className="mb-0">
+          Configure <strong>VITE_CODESPACE_NAME</strong> in <strong>.env.local</strong> for Codespaces deployments.
+          If it is unset, the app falls back to <strong>http://localhost:8000</strong>.
+        </p>
       </section>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

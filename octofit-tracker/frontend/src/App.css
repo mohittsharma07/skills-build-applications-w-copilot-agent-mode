@@ -2,16 +2,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 2rem;
+  gap: 1.5rem;
   padding: 3rem 1.5rem;
   background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
 }
 
-.hero-card {
+.hero-card,
+.content-card,
+.info-card {
   background: white;
   border-radius: 1.5rem;
-  padding: 2.5rem;
+  padding: 2rem;
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
 }
 
@@ -28,15 +29,7 @@
   max-width: 40rem;
 }
 
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.feature-card {
-  background: rgba(255, 255, 255, 0.85);
-  padding: 1.25rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+.nav-link.active {
+  background-color: #4f46e5;
+  color: white;
 }
