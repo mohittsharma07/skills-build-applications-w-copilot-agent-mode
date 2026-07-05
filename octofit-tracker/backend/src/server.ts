@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import { Activity, LeaderboardEntry, Team, User, Workout } from './models/index.js';
 
 type ResourceItem = {
-  id: string;
+  id?: string;
   [key: string]: unknown;
 };
 
@@ -17,31 +18,21 @@ const apiBaseUrl = codespaceName
 app.use(cors());
 app.use(express.json());
 
-const users: ResourceItem[] = [
-  { id: 'user-1', name: 'Ava Patel', email: 'ava@example.com' },
-];
-const teams: ResourceItem[] = [{ id: 'team-1', name: 'River Runners', members: 4 }];
-const activities: ResourceItem[] = [{ id: 'activity-1', type: 'Run', duration: 35 }];
-const leaderboard: ResourceItem[] = [{ id: 'leader-1', name: 'Ava Patel', score: 120 }];
-const workouts: ResourceItem[] = [{ id: 'workout-1', name: 'Tempo Run', focus: 'endurance' }];
-
-function createResourceRouter(resourceName: string, items: ResourceItem[]) {
+function createResourceRouter(resourceName: string, model: mongoose.Model<any>) {
   const router = express.Router();
 
-  router.get('/', (_req, res) => {
+  router.get('/', async (_req, res) => {
+    const items = await model.find({}).lean();
     res.json({ resource: resourceName, items, apiBaseUrl });
   });
 
-  router.post('/', (req, res) => {
-    const payload = req.body as ResourceItem;
-    const { id: _ignoredId, ...rest } = payload;
-    const item = { id: `${resourceName}-${items.length + 1}`, ...rest };
-    items.push(item);
+  router.post('/', async (req, res) => {
+    const item = await model.create(req.body);
     res.status(201).json(item);
   });
 
-  router.get('/:id', (req, res) => {
-    const item = items.find((entry) => entry.id === req.params.id);
+  router.get('/:id', async (req, res) => {
+    const item = await model.findById(req.params.id).lean();
     if (!item) {
       res.status(404).json({ error: `${resourceName} not found` });
       return;
@@ -50,26 +41,24 @@ function createResourceRouter(resourceName: string, items: ResourceItem[]) {
     res.json(item);
   });
 
-  router.put('/:id', (req, res) => {
-    const index = items.findIndex((entry) => entry.id === req.params.id);
-    if (index === -1) {
+  router.put('/:id', async (req, res) => {
+    const item = await model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!item) {
       res.status(404).json({ error: `${resourceName} not found` });
       return;
     }
 
-    items[index] = { ...items[index], ...req.body };
-    res.json(items[index]);
+    res.json(item);
   });
 
-  router.delete('/:id', (req, res) => {
-    const index = items.findIndex((entry) => entry.id === req.params.id);
-    if (index === -1) {
+  router.delete('/:id', async (req, res) => {
+    const item = await model.findByIdAndDelete(req.params.id);
+    if (!item) {
       res.status(404).json({ error: `${resourceName} not found` });
       return;
     }
 
-    const [removed] = items.splice(index, 1);
-    res.json(removed);
+    res.json(item);
   });
 
   return router;
@@ -79,11 +68,11 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', apiBaseUrl });
 });
 
-app.use('/api/users', createResourceRouter('users', users));
-app.use('/api/teams', createResourceRouter('teams', teams));
-app.use('/api/activities', createResourceRouter('activities', activities));
-app.use('/api/leaderboard', createResourceRouter('leaderboard', leaderboard));
-app.use('/api/workouts', createResourceRouter('workouts', workouts));
+app.use('/api/users', createResourceRouter('users', User));
+app.use('/api/teams', createResourceRouter('teams', Team));
+app.use('/api/activities', createResourceRouter('activities', Activity));
+app.use('/api/leaderboard', createResourceRouter('leaderboard', LeaderboardEntry));
+app.use('/api/workouts', createResourceRouter('workouts', Workout));
 
 const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/octofit_db';
 
